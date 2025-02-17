@@ -1,2 +1,5 @@
 # Generate docs for crate
 cargo doc --package <your_crate_name> --no-deps --open
+# Open rust official docs
+rustup doc
+rustup doc --book

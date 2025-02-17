@@ -37,6 +37,8 @@ impl State {
         let cap = surface.get_capabilities(&adapter);
         let surface_format = cap.formats[0];
 
+        let _shader_module = wgpu::include_wgsl!("shader.wgsl");
+
         let state = State {
             window,
             device,
@@ -131,17 +133,17 @@ struct App {
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
         println!("Resumed");
-        // Create window object
-        let window = Arc::new(
-            event_loop
-                .create_window(Window::default_attributes())
-                .unwrap(),
-        );
-
-        let state = pollster::block_on(State::new(window.clone()));
-        self.state = Some(state);
-
-        window.request_redraw();
+        if self.state.is_none() {
+            // Create window object
+            let window = Arc::new(
+                event_loop
+                    .create_window(Window::default_attributes())
+                    .unwrap(),
+            );
+            let state = pollster::block_on(State::new(window.clone()));
+            self.state = Some(state);
+        }
+        self.state.as_ref().unwrap().get_window().request_redraw();
     }
 
     fn window_event(&mut self, event_loop: &ActiveEventLoop, _id: WindowId, event: WindowEvent) {
